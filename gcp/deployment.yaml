@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: microblog-deployment
+  labels:
+   app: microblog
+spec:
+ replicas: 3
+ selector:
+  matchLabels:
+    app: microblog
+ template:
+  metadata:
+    labels:
+      app: microblog
+  spec:
+    containers:
+    - name: microblog-container 
+      image: chiu2006/test 
+      ports:
+      - containerPort: 5000
