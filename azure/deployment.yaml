@@ -24,6 +24,6 @@ spec:
             limits:
               memory: "400Mi"
           command: ["stress"]
-          args: [ "--cpu", "1"]
+          args: [ "--cpu", "1","--timeout", "360s"]
           ports:
             - containerPort: 8080

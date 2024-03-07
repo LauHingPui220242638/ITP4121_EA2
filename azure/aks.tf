@@ -1,4 +1,5 @@
 resource "azurerm_kubernetes_cluster" "aks" {
+  depends_on = [azurerm_log_analytics_workspace.logaw]
   name                = "${var.project}-aks"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -39,5 +40,21 @@ resource "azurerm_kubernetes_cluster" "aks" {
   identity {
     type = "SystemAssigned"
   }
+
+
+  oms_agent {
+    msi_auth_for_monitoring_enabled = true
+    log_analytics_workspace_id = azurerm_log_analytics_workspace.logaw.id
+  }
+  
 }
 
+
+
+resource "azurerm_log_analytics_workspace" "logaw" {
+  name                = "${var.project}-logaw"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}

@@ -17,8 +17,20 @@ cat $CONFIGFILE
 #     you may receive the following error message: error:
 #     error loading config file "$CONFIGFILE": yaml: line 2:
 #     mapping values are not allowed in this context
-sed -i -e '1s/^<< EOT//' -e '$s/EOT$//' "$CONFIGFILE"
+sed -i -e '1s/^<<EOT//' -e '$s/EOT$//' "$CONFIGFILE"
 
 export KUBECONFIG=$CONFIGFILE
 
 kubectl get nodes
+
+
+kubectl apply -f deployment.yaml 
+kubectl apply -f lb.yaml 
+kubectl apply -f hpa.yaml 
+
+
+kubectl get deployments
+kubectl get pods
+kubectl get hpa
+
+while true; do clear; kubectl get deployments; kubectl get pods;  kubectl get hpa; sleep 5; done
