@@ -1,12 +1,12 @@
 apiVersion: v1 
 kind: Service 
 metadata:
-  name: microblog
+  name: demoapp
 spec:
   selector:
-    app: microblog
+    app: demoapp
   ports:
   - name: http 
     port: 80 
-    targetPort: 8081
+    targetPort: 8080
   type: LoadBalancer
