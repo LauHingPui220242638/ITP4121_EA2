@@ -11,6 +11,9 @@
 				"hashicorp.terraform"
 			]
 		}
+	},
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/terraform-asdf:2": {}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
