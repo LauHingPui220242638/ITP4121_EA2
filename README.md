@@ -12,17 +12,17 @@
 **Task** | **Max Mark** | **Mark**
 --- | --- | ---
 Setup GitHub Project and shared to lecturer | 5 | &#9745;
-Using multiple Cloud Providers (only 1 ZERO mark) | 15 | &#9744;
-Multiple VMs in VPC and 2 private subnets | 5 | &#9744;
+Using multiple Cloud Providers (only 1 ZERO mark) | 15 | &#9745;
+Multiple VMs in VPC and 2 private subnets | 5 | &#9745;
 Unique Kubernetes Application with database | 5 | 
 Cluster AutoScaler | 5 | 
-Connect to Database | 5 | &#9744;
+Connect to Database | 5 | &#9745;
 Using Kubernetes Secret properly | 5 | 
 Using Cloud native load balancer | 5 | 
 With SSL/TLS | 5 | 
-Stream application log data to cloud logging services | 5 | &#9744;
-Multiple Cloud High Availability | 5 | &#9744;
-Demo deployment during Lab | 15 | &#9744;
+Stream application log data to cloud logging services | 5 | &#9745;
+Multiple Cloud High Availability | 5 | &#9745;
+Demo deployment during Lab | 15 | &#9745;
 
 Individual Mark: 20
 
