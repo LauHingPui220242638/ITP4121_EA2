@@ -25,12 +25,16 @@ kubectl get nodes
 
 
 kubectl apply -f deployment.yaml 
+kubectl apply -f hpa.yaml
+kubectl apply -f secret.yaml
+kubectl apply -f db.yaml
 kubectl apply -f lb.yaml 
-kubectl apply -f hpa.yaml 
+
 
 
 kubectl get deployments
 kubectl get pods
 kubectl get hpa
+kubectl get services
 
-while true; do clear; kubectl get deployments; kubectl get pods;  kubectl get hpa; sleep 5; done
+while true; do clear; kubectl get deployments; kubectl get pods;  kubectl get hpa; kubectl get services; sleep 5; done
