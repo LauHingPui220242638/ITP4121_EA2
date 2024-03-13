@@ -1,5 +1,5 @@
 scripts/azcrend.json
-
+**/keys/**
 
 
 # Local .terraform directories
@@ -8,6 +8,7 @@ scripts/azcrend.json
 # .tfstate files
 *.tfstate
 *.tfstate.*
+.terraform.lock.hcl
 
 # Files that contain sensitive data
 *.tfvars
