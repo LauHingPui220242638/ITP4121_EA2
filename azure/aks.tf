@@ -12,8 +12,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
     enable_auto_scaling = true
     min_count           = 1
     max_count           = 3
-
   }
+  
+    
+  
+
   linux_profile {
     admin_username = "adminuser"
 
@@ -25,6 +28,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin    = "kubenet"
     load_balancer_sku = "standard"
+
+
   }
   auto_scaler_profile {
 

@@ -37,3 +37,7 @@ crash.log
 .idea/
 *.swp
 *.bak
+
+#Python env
+**/pgadmin4/
+**/pgadmin4/*

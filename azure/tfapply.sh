@@ -24,6 +24,7 @@ export KUBECONFIG=$CONFIGFILE
 kubectl get nodes
 
 
+
 kubectl apply -f deployment.yaml 
 kubectl apply -f hpa.yaml
 kubectl apply -f secret.yaml
@@ -37,4 +38,11 @@ kubectl get pods
 kubectl get hpa
 kubectl get services
 
-while true; do clear; kubectl get deployments; kubectl get pods;  kubectl get hpa; kubectl get services; sleep 5; done
+kubectl delete crd --selector app=consul
+helm uninstall consul
+kubectl delete namespaces consul 
+helm install consul hashicorp/consul --create-namespace --namespace consul --values values.yaml
+# consul-k8s install -config-file=values.yaml -set global.image=hashicorp/consul:1.18.0 -auto-approve
+
+
+while true; do clear; kubectl get deployments; kubectl get pods;  kubectl get hpa; kubectl get services -A; sleep 5; done
