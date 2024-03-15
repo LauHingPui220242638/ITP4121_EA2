@@ -21,12 +21,12 @@ resource "tls_self_signed_cert" "default" {
     "server_auth",
   ]
 
-  dns_names = ["example.com"]
+  # dns_names = ["example.com"]
 
-  subject {
-    common_name  = "example.com"
-    organization = "ACME Examples, Inc"
-  }
+  # subject {
+  #  common_name  = "example.com"
+  #  organization = "ACME Examples, Inc"
+  #}
 }
 
 resource "google_compute_ssl_certificate" "default" {
