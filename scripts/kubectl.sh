@@ -9,3 +9,7 @@ kubectl get hpa
 
 
 while true; do clear; kubectl get deployments; kubectl get pods;  kubectl get hpa; sleep 5; done
+
+
+
+
