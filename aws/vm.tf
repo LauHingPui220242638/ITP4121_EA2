@@ -5,7 +5,7 @@ module "ec2_instance" {
 
   name = "instance-${each.key}"
 
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   key_name               = "user1"
   monitoring             = true
   vpc_security_group_ids = ["sg-2"]
