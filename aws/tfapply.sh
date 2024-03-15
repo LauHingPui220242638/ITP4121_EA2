@@ -1,6 +1,6 @@
-terraform init
-terraform fmt
-terraform validate
+# terraform init
+# terraform fmt
+# terraform validate
 terraform apply -auto-approve
 
 kubectl delete crd --selector app=consul
