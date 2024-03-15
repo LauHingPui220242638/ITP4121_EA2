@@ -17,7 +17,7 @@ resource "local_file" "kubeconfig" {
 }
 
 
-` "gcp-network" {
+module "gcp-network" {
   source       = "terraform-google-modules/network/google"
   project_id   = var.project_id
   network_name = "${var.network}-${var.env_name}"

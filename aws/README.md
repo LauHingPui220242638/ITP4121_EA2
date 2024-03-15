@@ -16,8 +16,6 @@ To use this profile:
 ```
 aws xxx --profile evan
 ```
-
-
 cd aws/
 terraform init
 
@@ -25,3 +23,11 @@ terraform plan     (test)
 terraform apply -auto-approve (build)
 
 terraform destroy -auto-approve  (delet)
+
+kubectl command:
+```
+kubectl get deployments
+kubectl get pods
+kubectl get hpa
+kubectl get services
+```
