@@ -16,3 +16,12 @@ To use this profile:
 ```
 aws xxx --profile evan
 ```
+
+
+kubectl command:
+```
+kubectl get deployments
+kubectl get pods
+kubectl get hpa
+kubectl get services
+```
