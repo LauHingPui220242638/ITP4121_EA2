@@ -1,7 +1,7 @@
 output "vpc_id" {
-  value = aws_vpc.my_vpc.id
+  value = module.network.vpc_id
 }
 
-output "subnet_ids" {
-  value = aws_subnet.private_subnet.*.id
+output "private_subnet_ids" {
+  value = module.network.private_subnet_ids
 }
