@@ -39,9 +39,9 @@ kubectl get hpa
 kubectl get services
 
 kubectl delete crd --selector app=consul
-helm uninstall consul
-kubectl delete namespaces consul 
+helm uninstall consuls consul 
 helm install consul hashicorp/consul --create-namespace --namespace consul --values values.yaml
+kubectl delete namespace
 # consul-k8s install -config-file=values.yaml -set global.image=hashicorp/consul:1.18.0 -auto-approve
 
 
