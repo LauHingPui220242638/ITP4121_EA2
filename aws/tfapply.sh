@@ -3,6 +3,10 @@
 # terraform validate
 terraform apply -auto-approve
 
+aws eks update-kubeconfig --region ap-east-1 --name multicloud-eks --profile evan
+
+export KUBECONFIG=kubeconfig.yaml
+
 kubectl delete crd --selector app=consul
 helm uninstall consul
 kubectl delete namespaces consul 

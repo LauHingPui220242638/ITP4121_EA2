@@ -36,20 +36,16 @@ module "iam" {
   project = var.project
 }
 
-module "iam_for_eks" {
-  source  = "./modules/iam"
-  project = var.project
-}
-
 module "eks_cluster" {
   source                  = "./modules/eks"
   project                 = var.project
-  eks_cluster_role_arn    = module.iam_for_eks.eks_cluster_role_arn
-  eks_node_group_role_arn = module.iam_for_eks.eks_node_group_role_arn
+  eks_cluster_role_arn    = module.iam.eks_cluster_role_arn
+  eks_node_group_role_arn = module.iam.eks_node_group_role_arn
   subnet_ids              = module.network.private_subnet_ids
   eks_cluster_sg_id       = module.ec2_instances_private.private_ec2_sg_id
-  node_group_desired_size = 0
-  node_group_min_size     = 0
-  node_group_max_size     = 1
+  node_group_desired_size = 1
+  node_group_min_size     = 1
+  node_group_max_size     = 2
   log_retention_in_days   = 30
 }
+
