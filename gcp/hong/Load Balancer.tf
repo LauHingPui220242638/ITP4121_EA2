@@ -1,3 +1,25 @@
+# VPC
+resource "google_compute_network" "default" {
+  name                    = "ssl-proxy-xlb-network"
+  provider                = google
+  auto_create_subnetworks = false
+}
+
+# backend subnet
+resource "google_compute_subnetwork" "default" {
+  name          = "ssl-proxy-xlb-subnet"
+  provider      = google
+  ip_cidr_range = "10.0.1.0/24"
+  region        = "us-central1"
+  network       = google_compute_network.default.id
+}
+
+# reserved IP address
+resource "google_compute_global_address" "default" {
+  name = "ssl-proxy-xlb-ip"
+}
+
+
 # Self-signed regional SSL certificate for testing
 resource "tls_private_key" "default" {
   algorithm = "RSA"
@@ -21,12 +43,12 @@ resource "tls_self_signed_cert" "default" {
     "server_auth",
   ]
 
-  # dns_names = ["example.com"]
+  dns_names = ["example.com"]
 
-  # subject {
-  #  common_name  = "example.com"
-  #  organization = "ACME Examples, Inc"
-  #}
+  subject {
+    common_name  = "example.com"
+    organization = "ACME Examples, Inc"
+  }
 }
 
 resource "google_compute_ssl_certificate" "default" {
@@ -78,6 +100,72 @@ resource "google_compute_health_check" "default" {
   tcp_health_check {
     port = "443"
   }
+}
+
+# instance template
+resource "google_compute_instance_template" "default" {
+  name         = "ssl-proxy-xlb-mig-template"
+  provider     = google
+  machine_type = "e2-small"
+  tags         = ["allow-health-check"]
+
+  network_interface {
+    network    = google_compute_network.default.id
+    subnetwork = google_compute_subnetwork.default.id
+    access_config {
+      # add external ip to fetch packages
+    }
+  }
+  disk {
+    source_image = "debian-cloud/debian-10"
+    auto_delete  = true
+    boot         = true
+  }
+
+  # install nginx and serve a simple web page
+  metadata = {
+    startup-script = <<-EOF1
+      #! /bin/bash
+      set -euo pipefail
+      export DEBIAN_FRONTEND=noninteractive
+      sudo apt-get update
+      sudo apt-get install  -y apache2 jq
+      sudo a2ensite default-ssl
+      sudo a2enmod ssl
+      sudo service apache2 restart
+      NAME=$(curl -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/hostname")
+      IP=$(curl -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip")
+      METADATA=$(curl -f -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=True" | jq 'del(.["startup-script"])')
+      cat <<EOF > /var/www/html/index.html
+      <h1>SSL Load Balancer</h1>
+      <pre>
+      Name: $NAME
+      IP: $IP
+      Metadata: $METADATA
+      </pre>
+      EOF
+    EOF1
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# MIG
+resource "google_compute_instance_group_manager" "default" {
+  name     = "ssl-proxy-xlb-mig1"
+  provider = google
+  zone     = "us-central1-c"
+  named_port {
+    name = "tcp"
+    port = 443
+  }
+  version {
+    instance_template = google_compute_instance_template.default.id
+    name              = "primary"
+  }
+  base_instance_name = "vm"
+  target_size        = 2
 }
 
 # allow access from health check ranges
