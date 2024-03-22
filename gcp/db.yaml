@@ -1,42 +1,42 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-  template:
-    metadata:
-      name: postgres
-      labels:
-        app: postgres
-      annotations:
-        consul.hashicorp.com/connect-service-upstreams: "postgres:5432"
-    spec:
-      containers:
-        - name: postgres
-          image: postgres:14-alpine
-          ports:
-            - containerPort: 5432
-          volumeMounts:
-            - name: postgres-data
-              mountPath: /var/lib/postgresql/data
-          env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: password
-            - name: POSTGRES_USER
-              value: admin
-            - name: POSTGRES_DB
-              value: admindb
-      volumes:
-        - name: postgres-data
-          emptyDir: {}
----
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: postgres
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: postgres
+#   template:
+#     metadata:
+#       name: postgres
+#       labels:
+#         app: postgres
+#       annotations:
+#         consul.hashicorp.com/connect-service-upstreams: "postgres:5432"
+#     spec:
+#       containers:
+#         - name: postgres
+#           image: postgres:14-alpine
+#           ports:
+#             - containerPort: 5432
+#           volumeMounts:
+#             - name: postgres-data
+#               mountPath: /var/lib/postgresql/data
+#           env:
+#             - name: POSTGRES_PASSWORD
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: db-secret
+#                   key: password
+#             - name: POSTGRES_USER
+#               value: admin
+#             - name: POSTGRES_DB
+#               value: admindb
+#       volumes:
+#         - name: postgres-data
+#           emptyDir: {}
+# ---
 apiVersion: v1
 kind: Service
 metadata:

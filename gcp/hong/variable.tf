@@ -1,6 +1,6 @@
 variable "project_id" {
   description = "The project ID of your project"
-  default     = "fyp-open-data-hackathon"
+  default     = "EA 2"
 }
 variable "cluster_name" {
   description = "The name for the GKE cluster"
@@ -8,15 +8,15 @@ variable "cluster_name" {
 }
 variable "env_name" {
   description = "The environment for the GKE cluster"
-  default     = "learn"
+  default     = "dev"
 }
 variable "region" {
   description = "The region to host the cluster in"
-  default     = "us-central1"
+  default     = "asia-east2"
 }
 variable "zones" {
   description = "Cluster zone"
-  default     = "us-central1-c"
+  default     = "asia-east2-c"
 }
 variable "network" {
   description = "The VPC network created to host the cluster in"

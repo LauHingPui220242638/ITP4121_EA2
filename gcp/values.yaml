@@ -4,7 +4,7 @@ global:
     enabled: true
   tls:
     enabled: true
-  datacenter: aks
+  datacenter: gke
   
 
 server:
