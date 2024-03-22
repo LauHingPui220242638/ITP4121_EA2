@@ -1,5 +1,5 @@
 provider "google" {
-  project = "fyp-open-data-hackathon"
+  project = "fyp-re"
   region  = var.region
 }
 
@@ -48,7 +48,7 @@ module "gke" {
   name              = "${var.cluster_name}-${var.env_name}"
   regional          = false
   region            = var.region
-  zones             = ["us-central1-c"]
+  zones             = ["asia-east2-b"]
   network           = module.gcp-network.network_name
   subnetwork        = module.gcp-network.subnets_names[0]
   ip_range_pods     = var.ip_range_pods_name
@@ -57,7 +57,7 @@ module "gke" {
     {
       name           = "node-pool-1"
       machine_type   = "n2-standard-2"
-      node_locations = "us-central1-c"
+      node_locations = "asia-east2-b"
       min_count      = 1
       max_count      = 2
       disk_size_gb   = 10
