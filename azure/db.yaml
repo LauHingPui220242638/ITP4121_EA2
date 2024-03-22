@@ -12,8 +12,8 @@ spec:
       name: postgres
       labels:
         app: postgres
-      # annotations:
-        # consul.hashicorp.com/connect-service-upstreams: "postgres:5432"
+      annotations:
+        consul.hashicorp.com/connect-service-upstreams: "postgres:5432"
     spec:
       containers:
         - name: postgres
@@ -62,8 +62,8 @@ spec:
     metadata:
       labels:
         app: pgadmin
-      # annotations:
-        # consul.hashicorp.com/connect-service-upstreams: "pgadmin:8080"
+      annotations:
+        consul.hashicorp.com/connect-service-upstreams: "pgadmin:8080"
     spec:
       containers:
         - name: pgadmin
