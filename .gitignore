@@ -41,3 +41,7 @@ crash.log
 #Python env
 **/pgadmin4/
 **/pgadmin4/*
+
+
+**/google-cloud-sdk/
+**/google-cloud-sdk/*
