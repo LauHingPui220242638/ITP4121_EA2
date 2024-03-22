@@ -41,7 +41,7 @@ module "eks_cluster" {
   project                 = var.project
   eks_cluster_role_arn    = module.iam.eks_cluster_role_arn
   eks_node_group_role_arn = module.iam.eks_node_group_role_arn
-  subnet_ids              = module.network.private_subnet_ids
+  subnet_ids              = module.network.public_subnet_ids
   eks_cluster_sg_id       = module.ec2_instances_private.private_ec2_sg_id
   node_group_desired_size = 1
   node_group_min_size     = 1
@@ -49,3 +49,7 @@ module "eks_cluster" {
   log_retention_in_days   = 30
 }
 
+resource "aws_eks_addon" "ebs" {
+  cluster_name = module.eks_cluster.eks_name
+  addon_name   = "aws-ebs-csi-driver"
+}
