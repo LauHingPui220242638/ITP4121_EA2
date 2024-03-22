@@ -1,6 +1,6 @@
 variable "project_id" {
   description = "The project ID of your project"
-  default     = "EA 2"
+  default     = "fyp-re"
 }
 variable "cluster_name" {
   description = "The name for the GKE cluster"
@@ -8,7 +8,7 @@ variable "cluster_name" {
 }
 variable "env_name" {
   description = "The environment for the GKE cluster"
-  default     = "dev"
+  default     = "learn"
 }
 variable "region" {
   description = "The region to host the cluster in"
@@ -16,7 +16,7 @@ variable "region" {
 }
 variable "zones" {
   description = "Cluster zone"
-  default     = "asia-east2-c"
+  default     = "asia-east2-b"
 }
 variable "network" {
   description = "The VPC network created to host the cluster in"
