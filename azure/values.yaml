@@ -3,7 +3,10 @@ global:
   peering:
     enabled: true
   tls:
-    enabled: true
+    enabled: false
+    acls:
+      manageSystemACLs: false
+      createReplicationToken: false
   datacenter: aks
   
 
