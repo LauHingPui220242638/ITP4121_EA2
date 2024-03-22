@@ -13,7 +13,7 @@ spec:
       labels:
         app: postgres
       annotations:
-        consul.hashicorp.com/connect-service-upstreams: "postgres:5432"
+            'consul.hashicorp.com/connect-inject': 'true'
     spec:
       containers:
         - name: postgres
@@ -42,6 +42,7 @@ kind: Service
 metadata:
   name: postgres
 spec:
+  type: ClusterIP
   selector:
     app: postgres
   ports:
@@ -63,7 +64,9 @@ spec:
       labels:
         app: pgadmin
       annotations:
-        consul.hashicorp.com/connect-service-upstreams: "pgadmin:8080"
+        consul.hashicorp.com/transparent-proxy: 'false'
+        # consul.hashicorp.com/connect-service-upstreams: "postgres:5432"
+        # consul.hashicorp.com/connect-inject: "true"
     spec:
       containers:
         - name: pgadmin

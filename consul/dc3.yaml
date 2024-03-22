@@ -1,0 +1,36 @@
+global:
+  name: consul
+  datacenter: gke
+  tls:
+    enabled: true
+    caCert:
+      secretName: consul-federation
+      secretKey: caCert
+    caKey:
+      secretName: consul-federation
+      secretKey: caKey
+  federation:
+    enabled: true
+connectInject:
+  enabled: true
+  default: true
+controller:
+  enabled: true
+meshGateway:
+  enabled: true
+  replicas: 1
+server:
+  replicas: 1
+  extraVolumes:
+    - type: secret
+      name: consul-federation
+      items:
+        - key: serverConfigJSON
+          path: config.json
+      load: true
+
+ui:
+  enabled: true
+  service:
+    enabled: true
+    type: LoadBalancer

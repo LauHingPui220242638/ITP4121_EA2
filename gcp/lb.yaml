@@ -6,7 +6,7 @@ spec:
   selector:
     app: pgadmin
   ports:
-    - port: 1688
+    - port: 80
       targetPort: pgadmin-port
       protocol: TCP
   type: LoadBalancer

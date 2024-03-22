@@ -37,17 +37,18 @@
 #         - name: postgres-data
 #           emptyDir: {}
 # ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres
-spec:
-  selector:
-    app: postgres
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: postgres
+# spec:
+#   type: ClusterIP
+#   selector:
+#     app: postgres
+#   ports:
+#     - protocol: TCP
+#       port: 5432
+#       targetPort: 5432
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -63,7 +64,9 @@ spec:
       labels:
         app: pgadmin
       annotations:
-        consul.hashicorp.com/connect-service-upstreams: "pgadmin:8080"
+        consul.hashicorp.com/transparent-proxy: 'false'
+        consul.hashicorp.com/connect-service-upstreams: "postgres:5432"
+        consul.hashicorp.com/connect-inject: "true"
     spec:
       containers:
         - name: pgadmin
