@@ -28,3 +28,9 @@ server:
         - key: serverConfigJSON
           path: config.json
       load: true
+
+ui:
+  enabled: true
+  service:
+    enabled: true
+    type: LoadBalancer

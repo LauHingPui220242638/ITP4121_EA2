@@ -4,7 +4,7 @@
 data "terraform_remote_state" "eks" {
   backend = "local"
   config = {
-    path = "../eks/terraform.tfstate"
+    path = "../aws/terraform.tfstate"
   }
 }
 
@@ -59,11 +59,16 @@ resource "helm_release" "consul_dc1" {
   depends_on = [kubernetes_secret.eks_federation_secret]
 }
 
-data "kubernetes_secret" "eks_federation_secret" {
+
+
+resource "kubernetes_secret" "eks_federation_secret" {
   provider = kubernetes.eks
   metadata {
     name = "consul-federation"
   }
 
   data = data.kubernetes_secret.aks_federation_secret.data
+
+  depends_on = [data.kubernetes_secret.aks_federation_secret]
 }
+

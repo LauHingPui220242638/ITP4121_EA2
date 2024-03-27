@@ -42,6 +42,9 @@ crash.log
 **/pgadmin4/
 **/pgadmin4/*
 
+*/awscred.sh
 
-**/google-cloud-sdk/
-**/google-cloud-sdk/*
+scripts/aws/
+scripts/aws/*
+scripts/google-cloud-sdk/
+scripts/google-cloud-sdk/*

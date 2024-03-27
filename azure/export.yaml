@@ -7,3 +7,5 @@ spec:
     - name: "postgres" 
       consumers:
       - peer: gke 
+      - peer: eks
+

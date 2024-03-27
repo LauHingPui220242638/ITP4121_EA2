@@ -1,7 +1,7 @@
 variable "project" {
   description = "The project name to be used for resource naming"
   type        = string
-  default     = "multicloud"
+  default     = "multicloud000"
 }
 
 variable "region" {

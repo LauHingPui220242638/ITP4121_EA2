@@ -1,6 +1,6 @@
 provider "aws" {
   region  = var.region
-  profile = "evan"
+#  profile = "evan"
 }
 
 module "network" {
@@ -31,10 +31,7 @@ module "ec2_instances_private" {
   // key_name is omitted or explicitly set to an empty string
 }
 
-module "iam" {
-  source  = "./modules/iam"
-  project = var.project
-}
+
 
 module "iam_for_eks" {
   source  = "./modules/iam"
@@ -48,8 +45,15 @@ module "eks_cluster" {
   eks_node_group_role_arn = module.iam_for_eks.eks_node_group_role_arn
   subnet_ids              = module.network.private_subnet_ids
   eks_cluster_sg_id       = module.ec2_instances_private.private_ec2_sg_id
-  node_group_desired_size = 0
+  node_group_desired_size = 1
   node_group_min_size     = 0
-  node_group_max_size     = 1
+  node_group_max_size     = 2
   log_retention_in_days   = 30
+}
+
+
+resource "null_resource" "kubectl" {
+    provisioner "local-exec" {
+        command = "aws eks --region ${var.region} update-kubeconfig --name ${module.eks_cluster.eks_cluster_name}"
+    }
 }

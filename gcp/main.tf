@@ -53,6 +53,7 @@ module "gke" {
   subnetwork        = module.gcp-network.subnets_names[0]
   ip_range_pods     = var.ip_range_pods_name
   ip_range_services = var.ip_range_services_name
+  deletion_protection = false
   node_pools = [
     {
       name           = "node-pool-1"
@@ -64,8 +65,10 @@ module "gke" {
       preemptible    = false
       auto_repair    = false
       auto_upgrade   = true
+      
     },
   ]
+  
 }
 
 output "cluster_name" {

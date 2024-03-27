@@ -1,5 +1,8 @@
 terraform apply -auto-approve  
 
+gcloud components install kubectl
+gcloud components install gke-gcloud-auth-plugin
+gcloud container clusters get-credentials gke-terraform-dev --region=asia-east2-c
 
 kubectl get nodes
 
@@ -12,14 +15,14 @@ kubectl get nodes
 
 # consul-k8s install -config-file=values.yaml -set global.image=hashicorp/consul:1.18.0 -auto-approve
 
-kubectl apply -f mesh.yaml 
+
+
 kubectl apply -f secret.yaml
 kubectl apply -f db.yaml
 kubectl apply -f lb.yaml 
-kubectl apply -f resolver.yaml
+
 
 kubectl get deployments -A
 kubectl get pods -A
-kubectl get hpa 
 kubectl get services -A
 

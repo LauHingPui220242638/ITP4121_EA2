@@ -8,7 +8,7 @@ az aks list \
   --query "[].{\"K8s cluster name\":name}" \
   --output table
 
-CONFIGFILE="./azurek8s"
+CONFIGFILE="/workspaces/ITP4121_EA2/azure/azurek8s"
 echo "$(terraform output kube_config)" > $CONFIGFILE
 
 cat $CONFIGFILE
@@ -32,7 +32,7 @@ kubectl get nodes
 
 # consul-k8s install -config-file=values.yaml -set global.image=hashicorp/consul:1.18.0 -auto-approve
 
-kubectl apply -f mesh.yaml 
+
 
 kubectl apply -f deployment.yaml 
 kubectl apply -f hpa.yaml

@@ -65,7 +65,7 @@ data  "kubernetes_secret" "aks_federation_secret" {
     name = "consul-federation"
   }
 
- # data = data.kubernetes_secret.eks_federation_secret.data
+
 
     depends_on = [helm_release.consul_dc2]
 }
