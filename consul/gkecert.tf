@@ -10,7 +10,7 @@ data "terraform_remote_state" "gke" {
 provider "google" {
   # credentials = file("<PATH_TO_SERVICE_ACCOUNT_JSON>")
   project     = "fyp-re"
-  region      = "asia-east2"
+  region      = data.terraform_remote_state.gke.outputs.region
 }
 
 data "google_client_config" "cluster" {
@@ -18,8 +18,8 @@ data "google_client_config" "cluster" {
 }
 
 data "google_container_cluster" "cluster" {
-  name       = "gke-terraform-dev"
-  location     = "asia-east2-c"
+  name       = data.terraform_remote_state.gke.outputs.cluster_name
+  location     = data.terraform_remote_state.gke.outputs.location
 
 }
 

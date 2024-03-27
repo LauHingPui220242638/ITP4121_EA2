@@ -1,10 +1,8 @@
 terraform apply -auto-approve  
 
-gcloud components install kubectl
-gcloud components install gke-gcloud-auth-plugin
-gcloud container clusters get-credentials gke-terraform-dev --region=asia-east2-c
+# gcloud components install kubectl
+# gcloud components install gke-gcloud-auth-plugin
 
-kubectl get nodes
 
 # kubectl delete crd --selector app=consul
 # helm uninstall consul
@@ -17,12 +15,4 @@ kubectl get nodes
 
 
 
-kubectl apply -f secret.yaml
-kubectl apply -f db.yaml
-kubectl apply -f lb.yaml 
-
-
-kubectl get deployments -A
-kubectl get pods -A
-kubectl get services -A
 
