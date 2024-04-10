@@ -1,281 +1,158 @@
+# resource "google_project" "fit_coral_419306" {
+# auto_create_network = true
+#   name                = "test"
+#   project_id          = "fyp-re"
+# }
 
-# VPC network
-resource "google_compute_network" "default" {
-  name                    = "l7-ilb-network"
+resource "google_compute_firewall" "default_allow_icmp" {
+  allow {
+    protocol = "icmp"
+  }
+  description   = "Allow ICMP from anywhere"
+  direction     = "INGRESS"
+  name          = "default-allow-icmp"
+  network       = google_compute_network.custom-test.self_link
+  # network       = google_compute_network.custom-test.self_link
+  priority      = 65534
+  project       = "fyp-re"
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_firewall" "default_allow_internal" {
+  allow {
+    ports    = ["0-65535"]
+    protocol = "tcp"
+  }
+  allow {
+    ports    = ["0-65535"]
+    protocol = "udp"
+  }
+  allow {
+    protocol = "icmp"
+  }
+  description   = "Allow internal traffic on the default network"
+  direction     = "INGRESS"
+  name          = "default-allow-internal"
+  network       = google_compute_network.custom-test.self_link
+  priority      = 65534
+  project       = "fyp-re"
+  source_ranges = ["10.128.0.0/9"]
+}
+
+resource "google_compute_firewall" "default_allow_rdp" {
+  allow {
+    ports    = ["3389"]
+    protocol = "tcp"
+  }
+  description   = "Allow RDP from anywhere"
+  direction     = "INGRESS"
+  name          = "default-allow-rdp"
+  network       = google_compute_network.custom-test.self_link
+  priority      = 65534
+  project       = "fyp-re"
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_firewall" "default_allow_ssh" {
+  allow {
+    ports    = ["22"]
+    protocol = "tcp"
+  }
+  description   = "Allow SSH from anywhere"
+  direction     = "INGRESS"
+  name          = "default-allow-ssh"
+  network       = google_compute_network.custom-test.self_link
+  priority      = 65534
+  project       = "fyp-re"
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_address" "default" {
+  name = "website-ip-1"
+  provider = google
+  region = "asia-east2"
+  network_tier = "STANDARD"
+}
+
+resource "google_compute_forwarding_rule" "lb_forwarding_rule" {
+  ip_address            = google_compute_address.default.id
+  ip_protocol           = "TCP"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  name                  = "lb-forwarding-rule"
+  network               = google_compute_network.custom-test.self_link
+  network_tier          = "STANDARD"
+  port_range            = "80-80"
+  project               = "fyp-re"
+  region                = "asia-east2"
+  target                = google_compute_region_target_http_proxy.lb_target_proxy.id
+}
+
+resource "google_compute_region_backend_service" "backend" {
+  connection_draining_timeout_sec = 300
+  load_balancing_scheme           = "EXTERNAL_MANAGED"
+  locality_lb_policy              = "ROUND_ROBIN"
+  name                            = "backend"
+  port_name                       = "http"
+  project                         = "fyp-re"
+  protocol                        = "HTTP"
+  region                          = "asia-east2"
+  session_affinity                = "NONE"
+  timeout_sec                     = 30
+  backend {
+  group = google_compute_region_network_endpoint_group.pp.self_link
+  balancing_mode = "UTILIZATION"
+  capacity_scaler = 1.0
+ }
+}
+
+resource "google_compute_subnetwork" "network" {
+  ip_cidr_range              = "10.0.0.0/24"
+  name                       = "network"
+  network                    = google_compute_network.custom-test.id
+  # private_ipv6_google_access = "DISABLE_GOOGLE_ACCESS"
+  project                    = "fyp-re"
+  purpose                    = "REGIONAL_MANAGED_PROXY"
+  region                     = "asia-east2"
+  role                       = "ACTIVE"
+}
+
+resource "google_compute_network" "custom-test" {
+  name                    = "test-network123321qwe"
+  project                 = "fyp-re"
   auto_create_subnetworks = false
 }
 
-# Proxy-only subnet
-resource "google_compute_subnetwork" "proxy_subnet" {
-  name          = "l7-ilb-proxy-subnet"
-  ip_cidr_range = "10.0.0.0/24"
-  region        = "asia-east2"
-  purpose       = "REGIONAL_MANAGED_PROXY"
-  role          = "ACTIVE"
-  network       = google_compute_network.default.id
-}
 
-# Backend subnet
-resource "google_compute_subnetwork" "default" {
-  name          = "l7-ilb-subnet"
-  ip_cidr_range = "10.0.1.0/24"
-  region        = "asia-east2"
-  network       = google_compute_network.default.id
-}
-
-# Reserved internal address
-resource "google_compute_address" "default" {
-  name         = "l7-ilb-ip"
-  provider     = google
-  subnetwork   = google_compute_subnetwork.default.id
-  address_type = "INTERNAL"
-  address      = "10.0.1.5"
-  region       = "asia-east2"
-  purpose      = "SHARED_LOADBALANCER_VIP"
-}
-
-# Regional forwarding rule
-resource "google_compute_forwarding_rule" "default" {
-  name                  = "l7-ilb-forwarding-rule"
-  region                = "asia-east2"
-  depends_on            = [google_compute_subnetwork.proxy_subnet]
-  ip_protocol           = "TCP"
-  ip_address            = google_compute_address.default.id
-  load_balancing_scheme = "INTERNAL_MANAGED"
-  port_range            = "443"
-  target                = google_compute_region_target_https_proxy.default.id
-  network               = google_compute_network.default.id
-  subnetwork            = google_compute_subnetwork.default.id
-  network_tier          = "PREMIUM"
-}
-
-# Self-signed regional SSL certificate for testing
-resource "tls_private_key" "default" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
-resource "tls_self_signed_cert" "A" {
-  private_key_pem = tls_private_key.default.private_key_pem
-
-  # Certificate expires after 12 hours.
-  validity_period_hours = 12
-
-  # Generate a new certificate if Terraform is run within three
-  # hours of the certificate's expiration time.
-  early_renewal_hours = 3
-
-  # Reasonable set of uses for a server SSL certificate.
-  allowed_uses = [
-    "key_encipherment",
-    "digital_signature",
-    "server_auth",
-  ]
-
-  dns_names = ["google.com"]
-
-  subject {
-    common_name  = "google.com"
-    organization = "ACME Examples, Inc"
-  }
-}
-
-resource "google_compute_region_ssl_certificate" "default" {
-  name_prefix = "my-certificate-"
-  private_key = tls_private_key.default.private_key_pem
-  certificate = tls_self_signed_cert.A.cert_pem
-  region      = "asia-east2"
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-# Regional target HTTPS proxy
-resource "google_compute_region_target_https_proxy" "default" {
-  name             = "l7-ilb-target-https-proxy"
-  region           = "asia-east2"
-  url_map          = google_compute_region_url_map.https_lb.id
-  ssl_certificates = [google_compute_region_ssl_certificate.default.self_link]
-}
-
-# Regional URL map
-resource "google_compute_region_url_map" "https_lb" {
-  name            = "l7-ilb-regional-url-map"
+resource "google_compute_region_url_map" "lb" {
+  default_service = google_compute_region_backend_service.backend.id
+  name            = "lb"
+  project         = "fyp-re"
   region          = "asia-east2"
-  default_service = google_compute_region_backend_service.default.id
 }
 
-# Regional backend service
-resource "google_compute_region_backend_service" "default" {
-  name                  = "l7-ilb-backend-service"
-  region                = "asia-east2"
-  protocol              = "HTTP"
-  port_name             = "http-server"
-  load_balancing_scheme = "INTERNAL_MANAGED"
-  timeout_sec           = 10
-  health_checks         = [google_compute_region_health_check.default.id]
-  backend {
-    group           = google_compute_region_instance_group_manager.default.instance_group
-    balancing_mode  = "UTILIZATION"
-    capacity_scaler = 1.0
-  }
-}
-
-# Instance template
-resource "google_compute_instance_template" "B" {
-  name         = "l7-ilb-mig-template"
-  machine_type = "e2-small"
-  tags         = ["http-server"]
-  network_interface {
-    network    = google_compute_network.default.id
-    subnetwork = google_compute_subnetwork.default.id
-    access_config {
-      # add external ip to fetch packages
-    }
-  }
-  disk {
-    source_image = "debian-cloud/debian-10"
-    auto_delete  = true
-    boot         = true
-  }
-
-  # install nginx and serve a simple web page
-  metadata = {
-    startup-script = <<-EOF1
-      #! /bin/bash
-      set -euo pipefail
-
-      export DEBIAN_FRONTEND=noninteractive
-      apt-get update
-      apt-get install -y nginx-light jq
-
-      NAME=$(curl -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/hostname")
-      IP=$(curl -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip")
-      METADATA=$(curl -f -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=True" | jq 'del(.["startup-script"])')
-
-      cat <<EOF > /var/www/html/index.html
-      <pre>
-      Name: $NAME
-      IP: $IP
-      Metadata: $METADATA
-      </pre>
-      EOF
-    EOF1
-  }
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-# Regional health check
-resource "google_compute_region_health_check" "default" {
-  name   = "l7-ilb-hc"
-  region = "asia-east2"
-  http_health_check {
-    port_specification = "USE_SERVING_PORT"
-  }
-}
-
-# Regional MIG
-resource "google_compute_region_instance_group_manager" "default" {
-  name   = "l7-ilb-mig1"
-  region = "asia-east2"
-  version {
-    instance_template = google_compute_instance_template.B.id
-    name              = "primary"
-  }
-  named_port {
-    name = "http-server"
-    port = 80
-  }
-  base_instance_name = "vm"
-  target_size        = 2
-}
-
-# Allow all access to health check ranges
-resource "google_compute_firewall" "C" {
-  name          = "l7-ilb-fw-allow-hc"
-  direction     = "INGRESS"
-  network       = google_compute_network.default.id
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "35.235.240.0/20"]
-  allow {
-    protocol = "tcp"
-  }
-}
-
-# Allow http from proxy subnet to backends
-resource "google_compute_firewall" "backends" {
-  name          = "l7-ilb-fw-allow-ilb-to-backends"
-  direction     = "INGRESS"
-  network       = google_compute_network.default.id
-  source_ranges = ["10.0.0.0/24"]
-  target_tags   = ["http-server"]
-  allow {
-    protocol = "tcp"
-    ports    = ["80", "443", "8080"]
-  }
-}
-
-# Test instance
-resource "google_compute_instance" "default" {
-  name         = "l7-ilb-test-vm"
-  zone         = "asia-east2-b"
-  machine_type = "e2-micro"
-  network_interface {
-    network    = google_compute_network.default.id
-    subnetwork = google_compute_subnetwork.default.id
-  }
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-10"
-    }
-  }
-}
-
-### HTTP-to-HTTPS redirect ###
-
-# Regional forwarding rule
-resource "google_compute_forwarding_rule" "redirect" {
-  name                  = "l7-ilb-redirect"
-  region                = "asia-east2"
-  ip_protocol           = "TCP"
-  ip_address            = google_compute_address.default.id # Same as HTTPS load balancer
-  load_balancing_scheme = "INTERNAL_MANAGED"
-  port_range            = "80"
-  target                = google_compute_region_target_http_proxy.default.id
-  network               = google_compute_network.default.id
-  subnetwork            = google_compute_subnetwork.default.id
-  network_tier          = "PREMIUM"
-}
-
-# Regional HTTP proxy
-resource "google_compute_region_target_http_proxy" "default" {
-  name    = "l7-ilb-target-http-proxy"
+resource "google_compute_region_target_http_proxy" "lb_target_proxy" {
+  name    = "lb-target-proxy"
+  project = "fyp-re"
   region  = "asia-east2"
-  url_map = google_compute_region_url_map.redirect.id
+  url_map = google_compute_region_url_map.lb.name
 }
 
-# Regional URL map
-resource "google_compute_region_url_map" "redirect" {
-  name            = "l7-ilb-redirect-url-map"
-  region          = "asia-east2"
-  default_service = google_compute_region_backend_service.default.id
-  host_rule {
-    hosts        = ["*"]
-    path_matcher = "allpaths"
-  }
+resource "google_compute_region_network_endpoint" "region-internet-ip-port-endpoint" {
+  region_network_endpoint_group = google_compute_region_network_endpoint_group.pp.name
+  region                = "asia-east2"
 
-  path_matcher {
-    name            = "allpaths"
-    default_service = google_compute_region_backend_service.default.id
-    path_rule {
-      paths = ["/"]
-      url_redirect {
-        https_redirect         = true
-        host_redirect          = "10.0.1.5:443"
-        redirect_response_code = "PERMANENT_REDIRECT"
-        strip_query            = true
-      }
-    }
-  }
+  ip_address  = "142.251.214.142"
+  port        = 80
 }
+
+
+# Network Endpoint Group
+resource "google_compute_region_network_endpoint_group" "pp" {
+  name                  = "neg"
+  network               = google_compute_network.custom-test.id
+  region                = "asia-east2"
+  network_endpoint_type = "INTERNET_IP_PORT"
+}
+
+
+
