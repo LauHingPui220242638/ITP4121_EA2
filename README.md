@@ -18,7 +18,7 @@ Unique Kubernetes Application with database | 5 | &#9745;
 Cluster AutoScaler | 5 | &#9745;
 Connect to Database | 5 | &#9745;
 Using Kubernetes Secret properly | 5 | &#9745;
-Using Cloud native load balancer | 5 | 
+Using Cloud native load balancer | 5 | &#9745;
 With SSL/TLS | 5 | &#9745;
 Stream application log data to cloud logging services | 5 | &#9745;
 Multiple Cloud High Availability | 5 | &#9745;
