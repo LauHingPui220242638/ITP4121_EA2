@@ -1,11 +1,11 @@
 provider "aws" {
-  region = "us-east-2"
+  region = var.region
 }
 
 data "aws_availability_zones" "available" {}
 
 locals {
-  cluster_name = "multicloud-eks"
+  cluster_name = var.cluster_name
 }
 
 resource "random_string" "suffix" {
@@ -17,7 +17,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.1.1"
 
-  name            = "multicloud-eks"
+  name            = var.cluster_name
   cidr            = "10.0.0.0/16"
   azs             = data.aws_availability_zones.available.names
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]

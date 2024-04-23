@@ -48,7 +48,7 @@ resource "helm_release" "consul_dc2" {
   name       = "consul"
   repository = "https://helm.releases.hashicorp.com"
   chart      = "consul"
-  version    = "1.2.0"
+  version    = "1.4.0"
 
   values = [
     file("dc2.yaml")

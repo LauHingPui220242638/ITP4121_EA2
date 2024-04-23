@@ -48,3 +48,7 @@ scripts/aws/
 scripts/aws/*
 scripts/google-cloud-sdk/
 scripts/google-cloud-sdk/*
+
+
+*/kubeconfig*
+azure/azurek8s

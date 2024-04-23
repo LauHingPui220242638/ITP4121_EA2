@@ -16,6 +16,7 @@ data "aws_eks_cluster" "cluster" {
   name = data.terraform_remote_state.eks.outputs.cluster_name
 }
 
+
 provider "kubernetes" {
   alias                  = "eks"
   host                   = data.aws_eks_cluster.cluster.endpoint
@@ -50,7 +51,7 @@ resource "helm_release" "consul_dc1" {
   name       = "consul"
   repository = "https://helm.releases.hashicorp.com"
   chart      = "consul"
-  version    = "1.2.0"
+  version    = "1.4.0"
 
   values = [
     file("dc1.yaml")
